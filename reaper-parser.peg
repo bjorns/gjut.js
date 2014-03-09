@@ -21,8 +21,8 @@ module
   = name:[a-z\.]+ { return name.join(""); }
 
 element
-  = "<" first:literal ">" space "</" second:literal ">" { 
-    return {'type': 'element', 'name': first };
+  = "<" first:literal ">" space? children:element* "</" second:literal ">" space? { 
+    return {'type': 'element', 'name': first, 'children': children };
   }
 
 literal

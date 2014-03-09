@@ -1,6 +1,9 @@
-all: reaper-parser.js
+test: reaper-parser.js
 	node main.js
 
-reaper-parser.js:
-	pegjs reaper-parser.peg 
+reaper-parser.js: reaper-parser.peg /usr/local/bin/pegjs
+	pegjs $< 
 
+# Based on npm from homebrew on MacOS
+/usr/local/bin/pegjs:
+	npm install -g pegjs
