@@ -1,0 +1,32 @@
+{
+  doc = { imports: [],
+         elements: []}
+}
+
+start
+  = document { return doc; }
+
+document
+  = i:import document { doc.imports.push(i); }
+  / e:element document { doc.elements.push(e); }
+  / space document { }
+  / { }
+
+import
+  = "@import" space modulename:module { 
+    return {'type': 'import', 'module': modulename };
+  }
+
+module
+  = name:[a-z\.]+ { return name.join(""); }
+
+element
+  = "<" first:literal ">" space "</" second:literal ">" { 
+    return {'type': 'element', 'name': first };
+  }
+
+literal
+  = letters:[a-z]+ { return letters.join(""); }
+
+space
+  = chars:[ \n\t]+ { return "SPACE" }
