@@ -22,6 +22,9 @@ module
 
 element
   = "<" first:literal ">" space? children:element* "</" second:literal ">" space? { 
+    if (first != second) {
+      console.log("error: Start tag <" + first + "> matches up with end tag </" + second + ">")
+    }
     return {'type': 'element', 'name': first, 'children': children };
   }
 
