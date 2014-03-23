@@ -1,4 +1,8 @@
 {
+  var util = require('./parser-util.js')
+
+  lineno = 1;
+
   doc = { imports: [],
          elements: []}
 }
@@ -7,29 +11,53 @@ start
   = document { return doc; }
 
 document
-  = i:import document { doc.imports.push(i); }
-  / e:element document { doc.elements.push(e); }
-  / space document { }
+  = l:importlist document { doc.imports = doc.imports.concat(l); }
+  / l:elementlist document { doc.elements = doc.elements.concat(l); }
   / { }
 
+importlist
+  = i:import l:importlist { return [e].concat(l); }
+  / i:import { return [i]; }
+
 import
-  = "@import" space modulename:module { 
+  = "@import " modulename:module space { 
     return {'type': 'import', 'module': modulename };
   }
 
 module
   = name:[a-z\.]+ { return name.join(""); }
 
+elementlist
+  = e:element l:elementlist { return [e].concat(l); }
+  / e:element { return [e]; }
+
 element
-  = "<" first:literal ">" space? children:element* "</" second:literal ">" space? { 
-    if (first != second) {
-      console.log("error: Start tag <" + first + "> matches up with end tag </" + second + ">")
+  = starttag:opentag children:elementlist? endtag:closetag { 
+    if (starttag != endtag) {
+      console.log("error " + lineno + ": Start tag <" + starttag + ">  does not match up with end tag </" + endtag + ">")
     }
-    return {'type': 'element', 'name': first, 'children': children };
+    
+    return {
+      'type': 'element', 
+      'name': starttag, 
+      'children': children,
+      'lineno': lineno };
   }
+
+opentag
+  = "<" starttag:literal space? attribute* ">" space? { return starttag }
+
+closetag
+  = "</" endtag:literal ">" space? { return endtag }
+
+attribute
+  = literal ("=\"" literal (space literal)* "\"")?
 
 literal
   = letters:[a-z]+ { return letters.join(""); }
 
 space
-  = chars:[ \n\t]+ { return "SPACE" }
+  = chars:[ \n\t]+ { 
+    lineno += util.count_linebreaks(chars.join("")); // Increase current line.
+    return "SPACE"
+  }
