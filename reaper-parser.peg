@@ -4,7 +4,7 @@
   lineno = 1;
 
   doc = { imports: [],
-         elements: []}
+         content: []}
 }
 
 start
@@ -12,7 +12,7 @@ start
 
 document
   = l:importlist document { doc.imports = doc.imports.concat(l); }
-  / l:elementlist document { doc.elements = doc.elements.concat(l); }
+  / c:content document { doc.content = doc.content.concat(c); }
   / { }
 
 importlist
@@ -27,23 +27,46 @@ import
 module
   = name:[a-z\.]+ { return name.join(""); }
 
-elementlist
-  = e:element l:elementlist { return [e].concat(l); }
-  / e:element { return [e]; }
+content
+  = text:[^<]+ rest:content { 
+    var node = {
+      type: 'text',
+      content: text.join('')
+    };
+    return [node].concat(rest);
+  }
+  / text:[^<]+ { 
+    var node = {
+      type: 'text',
+      content: text.join('')
+    };
+    return [node];
+  }
+  / e:element rest:content {
+    var node = {
+      type: 'element',
+      content: e
+    };
+    return [node].concat(rest);
+  }
+  / e:element {
+    var node = {
+      type: 'element',
+      content: e
+    };
+    return [node];
+  }
 
 element
-  = starttag:opentag children:elementlist? endtag:closetag { 
+  = starttag:opentag c:content? endtag:closetag { 
     if (starttag.name != endtag) {
       console.log("error " + lineno + ": Start tag <" + starttag.name + ">  does not match up with end tag </" + endtag + ">")
-    }
-    if (children === null) {
-      children = [];
     }
     return {
       type: 'element', 
       name: starttag.name, 
       attributes: starttag.attributes,
-      children: children,
+      content: c === null ? [] : c,
       lineno: lineno };
   }
 

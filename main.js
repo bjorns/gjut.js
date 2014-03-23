@@ -6,6 +6,7 @@ var fs = require('fs'),
 fs.readFile('./example.html', { encoding: 'utf-8' }, function(err,data) {
   if (!err) {
     doc = parser.parse(data);
+    console.log(doc);
     console.log(renderer.render(doc));
   } else {
     console.log(err);
