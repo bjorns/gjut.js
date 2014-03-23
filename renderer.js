@@ -10,13 +10,22 @@ module.exports = (function() {
     return ret + str;
   }
 
-  // TODO: parse properly.
-  function render_attributes(element) {
-    var ret = "";
-    for (var i=0; i < element.attributes.length; ++i) {
-
+  function render_attribute(attribute) {
+    var ret = attribute.name;
+    if (attribute.value.length > 0) {
+      ret += "\"" + attribute.value.join(" ") + "\"";
     }
     return ret;
+  }
+
+  function render_attributes(element) {
+    var rendered_attrs = [];
+
+    for (var i=0; i < element.attributes.length; ++i) {
+      var attr = element.attributes[i];
+      rendered_attrs.push(render_attribute(attr));
+    }
+    return (rendered_attrs.length > 0 ? " " : "") + rendered_attrs.join(' ');
   }
 
   function render_element(element, indent_level) {

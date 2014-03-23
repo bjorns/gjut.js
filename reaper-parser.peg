@@ -48,7 +48,7 @@ element
   }
 
 opentag
-  = "<" starttag:literal space? attrs:attribute* ">" space? { 
+  = "<" starttag:literal space? attrs:attributelist? ">" space? { 
     return {
       name: starttag,
       attributes: attrs === null ? [] : attrs
@@ -58,11 +58,29 @@ opentag
 closetag
   = "</" endtag:literal ">" space? { return endtag }
 
+attributelist
+  = a:attribute l:attributelist { return [a].concat(l); }
+  / a:attribute { return [a]; }
+
+attribute_value
+  = "=\"" v:literallist "\"" {
+    return v;
+  }
+
 attribute
-  = literal ("=\"" literal (space literal)* "\"")?
+  = name:literal values:attribute_value? space? {
+    return {
+      name: name,
+      value: values === null ? [] : values
+    };
+  }
+
+literallist
+  = lit:literal lst:literallist { return [lit].concat(lst); }
+  / lit:literal { return [lit] }
 
 literal
-  = letters:[a-z]+ { return letters.join(""); }
+  = letters:[a-zA-Z0-9]+ space? { return letters.join(""); }
 
 space
   = chars:[ \n\t]+ { 
