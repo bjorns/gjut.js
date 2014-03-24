@@ -52,7 +52,13 @@ module.exports = (function() {
             parts = varname.split('.'),
             first = subarray(parts, 0, parts.length).join('.'),
             last = parts[parts.length-1];
-        tokens[i] = context[first][last];
+        console.log("=== " + first)
+        console.log("--> " + last)
+        if (!context[first][last.trim()]) {
+          console.log("error: Variable " + t + " does not seem to be defined.");
+        } else {
+          tokens[i] = context[first][last.trim()];  
+        }
       }
     }
     return tokens.join(' ');
