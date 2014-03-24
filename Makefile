@@ -1,14 +1,14 @@
-test: reaper-parser.js
-	node main.js
+test: html-parser.js
+	node gjut.js
 
-reaper-parser.js: reaper-parser.peg /usr/local/bin/pegjs
+%.js: %.peg /usr/local/bin/pegjs
 	pegjs $< 
 
 # Based on npm from homebrew on MacOS
 /usr/local/bin/pegjs:
 	npm install -g pegjs
 
-clean: reaper-parser.js
+clean: html-parser.js
 	rm -f $^
 
 .PHONY: clean test

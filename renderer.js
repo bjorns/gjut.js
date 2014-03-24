@@ -28,28 +28,65 @@ module.exports = (function() {
     return (rendered_attrs.length > 0 ? " " : "") + rendered_attrs.join(' ');
   }
 
-  function render_element(element, indent_level) {
+  function render_element(context, element, indent_level) {
     var ret = indent("<" + element.name + render_attributes(element) + ">\n", indent_level);
     for (var i=0; i < element.content.length; ++i) {
-      ret += render_content(element.content[i], indent_level + 1);
+      ret += render_content(context, element.content[i], indent_level + 1);
     }
     ret += indent("</" + element.name + ">\n", indent_level);
     return ret;
   }
 
-  function render_content(content, indent_level) {
+  function subarray(array, start, end) {
+    return array.filter( function( _, i ) {
+      return ( i >= start && i < (end-1) );
+    });
+  }
+
+  function substitute_variables(context, text) {
+    var tokens = text.split(' ');
+    for (var i = 0; i < tokens.length; ++i) {
+      var t = tokens[i];
+      if (t[0] === '@') {
+        var varname = t.substring(1,t.length),
+            parts = varname.split('.'),
+            first = subarray(parts, 0, parts.length).join('.'),
+            last = parts[parts.length-1];
+        tokens[i] = context[first][last];
+      }
+    }
+    return tokens.join(' ');
+  }
+
+  function render_content(context, content, indent_level) {
     if (content.type === 'text') {
-      return indent(content.content + '\n', indent_level);
+      return indent(substitute_variables(context, content.content) + '\n', indent_level);
     } else if (content.type === 'element') {
-      return render_element(content.content, indent_level);
+      return render_element(context, content.content, indent_level);
     }
   }
 
+  function load_imports(doc) {
+    var imports = {};
+    for (var i=0; i < doc.imports.length; ++i) {
+      var imp = doc.imports[i].module,
+          parts = imp.split('.'),
+          varname = parts[parts.length-1],
+          filename = './' + parts.join('/') + '.js',
+          x = require(filename);
+      imports[imp] = x;
+    }
+    return imports;
+  }
+
   function render(doc) {
-    var ret = "";
+    var ret = "",
+        context = load_imports(doc);
+
+    console.log(context);
     for (var i=0; i < doc.content.length; ++i) {
       var e = doc.content[i];
-      ret += render_content(e, 0); // TODO: Inefficient?
+      ret += render_content(context, e, 0); // TODO: Inefficient?
     }
     return ret;
   }
