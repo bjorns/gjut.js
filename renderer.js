@@ -1,6 +1,7 @@
 module.exports = (function() {
   "use strict";
-  var INDENT = "  ";
+  var INDENT = "  ",
+    util = require('./util.js');
 
   function indent(str, indent_level) {
     var ret = "";
@@ -13,7 +14,7 @@ module.exports = (function() {
   function render_attribute(attribute) {
     var ret = attribute.name;
     if (attribute.value.length > 0) {
-      ret += "\"" + attribute.value.join(" ") + "\"";
+      ret += "=\"" + attribute.value.join(" ") + "\"";
     }
     return ret;
   }
@@ -37,27 +38,17 @@ module.exports = (function() {
     return ret;
   }
 
-  function subarray(array, start, end) {
-    return array.filter( function( _, i ) {
-      return ( i >= start && i < (end-1) );
-    });
-  }
-
   function substitute_variables(context, text) {
     var tokens = text.split(' ');
     for (var i = 0; i < tokens.length; ++i) {
       var t = tokens[i];
       if (t[0] === '@') {
         var varname = t.substring(1,t.length),
-            parts = varname.split('.'),
-            first = subarray(parts, 0, parts.length).join('.'),
-            last = parts[parts.length-1];
-        console.log("=== " + first)
-        console.log("--> " + last)
-        if (!context[first][last.trim()]) {
+            ref = util.split_annotation(varname);
+        if (!context[ref.modulename][ref.objectname]) {
           console.log("error: Variable " + t + " does not seem to be defined.");
         } else {
-          tokens[i] = context[first][last.trim()];  
+          tokens[i] = context[ref.modulename][ref.objectname];  
         }
       }
     }
@@ -72,24 +63,9 @@ module.exports = (function() {
     }
   }
 
-  function load_imports(doc) {
-    var imports = {};
-    for (var i=0; i < doc.imports.length; ++i) {
-      var imp = doc.imports[i].module,
-          parts = imp.split('.'),
-          varname = parts[parts.length-1],
-          filename = './' + parts.join('/') + '.js',
-          x = require(filename);
-      imports[imp] = x;
-    }
-    return imports;
-  }
-
-  function render(doc) {
-    var ret = "",
-        context = load_imports(doc);
-
-    console.log(context);
+  function render(doc, context) {
+    var ret = "";
+        
     for (var i=0; i < doc.content.length; ++i) {
       var e = doc.content[i];
       ret += render_content(context, e, 0); // TODO: Inefficient?

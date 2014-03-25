@@ -4,7 +4,8 @@
   lineno = 1;
 
   doc = { imports: [],
-         content: []}
+         content: [],
+         annotation: null}
 }
 
 start
@@ -25,7 +26,7 @@ import
   }
 
 module
-  = name:[a-z\.]+ { return name.join(""); }
+  = name:[a-zA-Z\.]+ { return name.join(""); }
 
 content
   = text:[^<]+ rest:content { 
@@ -57,6 +58,18 @@ content
     return [node];
   }
 
+opentag
+  = "<" starttag:literal space? attrs:attributelist? annotation:elementannotation?">" space? { 
+    return {
+      name: starttag,
+      attributes: attrs === null ? [] : attrs,
+      annotation: annotation
+    };
+  }
+
+closetag
+  = "</" endtag:literal ">" space? { return endtag }
+
 element
   = starttag:opentag c:content? endtag:closetag { 
     if (starttag.name != endtag) {
@@ -66,20 +79,10 @@ element
       type: 'element', 
       name: starttag.name, 
       attributes: starttag.attributes,
+      annotation: starttag.annotation,
       content: c === null ? [] : c,
       lineno: lineno };
   }
-
-opentag
-  = "<" starttag:literal space? attrs:attributelist? ">" space? { 
-    return {
-      name: starttag,
-      attributes: attrs === null ? [] : attrs
-    };
-  }
-
-closetag
-  = "</" endtag:literal ">" space? { return endtag }
 
 attributelist
   = a:attribute l:attributelist { return [a].concat(l); }
@@ -96,6 +99,11 @@ attribute
       name: name,
       value: values === null ? [] : values
     };
+  }
+
+elementannotation
+  = "@" functionname:module "()" {
+    return functionname;
   }
 
 literallist
