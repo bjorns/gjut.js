@@ -3,9 +3,11 @@
 
   lineno = 1;
 
-  doc = { imports: [],
-         content: [],
-         annotation: null}
+  doc = { type: 'document',
+          imports: [],
+          content: [],
+          annotation: null
+        };
 }
 
 start
