@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+(function() {
+  "use strict";
+  var path = require('path');
+
+  if (process.argv.length > 2) {
+    var fs = require('fs'),
+      gjut = require('../lib/main.js'),
+      filename = process.argv[2],
+      basedir = path.dirname(path.resolve(filename)),
+      readStream = fs.ReadStream(filename);
+      gjut.render(readStream, process.stdout, basedir);
+  } else {
+    console.log("Usage " + process.argv[1] + " <input-file>");
+  }
+}());

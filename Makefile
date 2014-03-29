@@ -1,5 +1,5 @@
 test: html-parser.js
-	node gjut.js
+	node main.js
 
 %.js: %.peg /usr/local/bin/pegjs
 	pegjs $< 
