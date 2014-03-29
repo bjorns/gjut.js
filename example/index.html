@@ -1,0 +1,14 @@
+@import variables
+
+<html>
+    <head>
+      <title>Static: @variables.title</title>
+    </head>
+    <body>
+      @insert(header.html)
+
+      <div class="foo bar" @variables.modifyBody()>
+        @variables.body 
+      </div>
+    </body>
+</html>

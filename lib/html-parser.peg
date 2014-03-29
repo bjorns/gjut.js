@@ -28,18 +28,40 @@ import
 module
   = name:[a-zA-Z\.]+ { return name.join(""); }
 
+macro
+  = '@' macroname:[a-zA-Z0-9\.]+ '(' argument:[a-zA-Z0-9\.]+ ')' {
+    return {
+      type: 'macro',
+      content: '@' + macroname.join(''),
+      argument: argument.join('')
+    };
+  }
+  / '@' macroname:[a-zA-Z0-9\.]+ {
+    return {
+      type: 'macro',
+      content: '@' + macroname.join('')
+    };
+  }
+  
+
 content
-  = text:[^<]+ rest:content { 
+  = m:macro rest:content { 
+    return [m].concat(rest);
+  }
+  / m:macro { 
+    return [m];
+  }
+  / text:[^<^@]+ rest:content { 
     var node = {
       type: 'text',
-      content: text.join('')
+      content: text.join('').trim()
     };
     return [node].concat(rest);
   }
-  / text:[^<]+ { 
+  / text:[^<^@]+ { 
     var node = {
       type: 'text',
-      content: text.join('')
+      content: text.join('').trim()
     };
     return [node];
   }
@@ -59,7 +81,7 @@ content
   }
 
 opentag
-  = "<" starttag:literal space? attrs:attributelist? annotation:elementannotation?">" space? { 
+  = "<" starttag:literal space? attrs:attributelist? annotation:elementannotation?">" { 
     return {
       name: starttag,
       attributes: attrs === null ? [] : attrs,
