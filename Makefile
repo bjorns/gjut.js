@@ -1,5 +1,8 @@
-test: html-parser.js
-	node main.js
+example:
+	./bin/gjut-cli example.html
+
+test:
+	nodeunit test
 
 %.js: %.peg /usr/local/bin/pegjs
 	pegjs $< 
@@ -11,4 +14,4 @@ test: html-parser.js
 clean: html-parser.js
 	rm -f $^
 
-.PHONY: clean test
+.PHONY: clean test example
