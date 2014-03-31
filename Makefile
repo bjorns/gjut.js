@@ -1,5 +1,5 @@
 example: lib/html-parser.js
-	./bin/gjut-cli example/index.html
+	./bin/gjutc example/index.html
 
 test:
 	nodeunit test
