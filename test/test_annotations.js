@@ -12,7 +12,10 @@ module.exports = {
         
         var element = {
                 content: [],
-                annotation: 'module.function'
+                annotation: {
+                    modulename: 'module',
+                    objectname: 'function'
+                }
             },
             context = {
                 'module': {

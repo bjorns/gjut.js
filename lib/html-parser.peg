@@ -1,5 +1,5 @@
 {
-  var util = require('./parser-util.js')
+  var parser_util = require('./parser_util.js')
 
   lineno = 1;
 
@@ -21,9 +21,12 @@ importlist
   / i:import { return [i]; }
 
 import
-  = "@import " modulename:module space { 
+  = "@require " modulename:module space { 
     return {'type': 'import', 'module': modulename };
   }
+
+variable
+  = name:[a-zA-Z]+ { return name.join(''); }
 
 module
   = name:[a-zA-Z\.]+ { return name.join(""); }
@@ -123,9 +126,28 @@ attribute
     };
   }
 
-elementannotation
+functioncall
   = "@" functionname:module "()" {
-    return functionname;
+    var variable = parser_util.make_variable(functionname);
+    variable['type'] = 'funcall';
+    return variable;
+  }
+
+iteration
+ = "@foreach" space? "(" + space? func:functioncall space "in" space "@" collection:module space? ")" {
+    return {
+      type: 'iteration',
+      function: func,
+      collection: collection
+    }
+  }
+
+elementannotation
+  = i:iteration {
+    return i;
+  }
+  / funcall:functioncall {
+    return funcall;
   }
 
 literallist
@@ -137,6 +159,6 @@ literal
 
 space
   = chars:[ \n\t]+ { 
-    lineno += util.count_linebreaks(chars.join("")); // Increase current line.
+    lineno += parser_util.count_linebreaks(chars.join("")); // Increase current line.
     return "SPACE"
   }
