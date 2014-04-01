@@ -23,7 +23,7 @@ importlist
   / i:import { return [i]; }
 
 import
-  = "@require " modulename:module space { 
+  = "@require " modulename:module space {
     return {'type': 'import', 'module': modulename };
   }
 
@@ -47,23 +47,23 @@ macro
       content: '@' + macroname.join('')
     };
   }
-  
+
 
 content
-  = m:macro rest:content { 
+  = m:macro rest:content {
     return [m].concat(rest);
   }
-  / m:macro { 
+  / m:macro {
     return [m];
   }
-  / text:[^<^@]+ rest:content { 
+  / text:[^<^@]+ rest:content {
     var node = {
       type: 'text',
       content: text.join('').trim()
     };
     return [node].concat(rest);
   }
-  / text:[^<^@]+ { 
+  / text:[^<^@]+ {
     var node = {
       type: 'text',
       content: text.join('').trim()
@@ -71,22 +71,14 @@ content
     return [node];
   }
   / e:element rest:content {
-    var node = {
-      type: 'element',
-      content: e
-    };
-    return [node].concat(rest);
+    return [e].concat(rest);
   }
   / e:element {
-    var node = {
-      type: 'element',
-      content: e
-    };
-    return [node];
+    return [e];
   }
 
 opentag
-  = "<" starttag:literal space? attrs:attributelist? annotation:elementannotation?">" { 
+  = "<" starttag:literal space? attrs:attributelist? annotation:elementannotation?">" {
     return {
       name: starttag,
       attributes: attrs === null ? [] : attrs,
@@ -98,13 +90,13 @@ closetag
   = "</" endtag:literal ">" space? { return endtag }
 
 element
-  = starttag:opentag c:content? endtag:closetag { 
+  = starttag:opentag c:content? endtag:closetag {
     if (starttag.name != endtag) {
       console.log("error " + lineno + ": Start tag <" + starttag.name + ">  does not match up with end tag </" + endtag + ">")
     }
     return {
-      type: 'element', 
-      name: starttag.name, 
+      type: 'element',
+      name: starttag.name,
       attributes: starttag.attributes,
       annotation: starttag.annotation,
       content: c === null ? [] : c,
@@ -139,8 +131,8 @@ iteration
  = "@foreach" space? "(" + space? func:functioncall space "in" space "@" collection:module space? ")" {
     return {
       type: 'iteration',
-      function: func,
-      collection: collection
+      funcall: func,
+      collection: parser_util.make_variable(collection)
     }
   }
 
@@ -160,7 +152,7 @@ literal
   = letters:[a-zA-Z0-9]+ space? { return letters.join(""); }
 
 space
-  = chars:[ \n\t]+ { 
+  = chars:[ \n\t]+ {
     lineno += parser_util.count_linebreaks(chars.join("")); // Increase current line.
     return "SPACE"
   }

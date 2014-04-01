@@ -1,12 +1,23 @@
 module.exports = (function() {
+  function modifyBody(element) {
+    element.attributes.push({
+      name: 'id',
+      value: ["syntheticId"]
+    });
+  }
+
+  function listItem(element, i) {
+    element.content.push({
+      type: 'text',
+      content: '=== ' + i + " ==="
+    });
+  }
+
   return {
     title: "My Title",
     body: "Blah blah body.",
-    modifyBody: function(element) {
-      element.attributes.push({
-        name: 'id',
-        value: ["syntheticId"]
-      });
-    }
+    modifyBody: modifyBody,
+    listItem: listItem,
+    array: [1,2,3,4,5]
   };
 })();
