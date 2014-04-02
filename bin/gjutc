@@ -2,16 +2,34 @@
 
 (function() {
   "use strict";
-  var path = require('path');
+  var path = require('path'),
+    stdio = require('stdio'),
+    options = stdio.getopt({
+    'format': {key: 'f', args: 1, description: 'Output format, valid formats are html and json.'}
+  });
 
-  if (process.argv.length > 2) {
+
+  if (options.args && options.args.length > 0) {
+
     var fs = require('fs'),
       gjut = require('../lib/main.js'),
-      filename = process.argv[2],
-      basedir = path.dirname(path.resolve(filename)),
+      filename = options.args[0],
       readStream = fs.ReadStream(filename);
-      gjut.render(readStream, process.stdout, basedir);
+
+    options.basedir = path.dirname(path.resolve(filename));
+
+    if (!options.format) {
+      options.format = 'html';
+    } else {
+      if (options.format !== 'html' && options.format !== 'json') {
+        console.log('error: Only formats html and json are accepted, unexpected: '+ options.format);
+        process.exit(-1);
+      }
+    }
+    gjut.render(readStream, process.stdout, options);
   } else {
-    console.log("Usage " + process.argv[1] + " <input-file>");
+    console.log("Usage: node gjutc [options] <input-file>");
+    console.log("Options:")
+    console.log("\t-f, --format=<format>\tOutput format, [html|json].");
   }
 }());

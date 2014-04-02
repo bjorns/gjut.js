@@ -1,4 +1,4 @@
-GJUT.js
+gjut.js
 =======
 
 Ask any old unix beard how much preprocessor code is a dignified amount and they will likely tell you _as little as possible_. In fact, since C++, no new major programming languange has used a preprocessor and that for good reason.
@@ -12,7 +12,11 @@ So far _Gjut_ is merely an experiment to make a point.
 
 Requirements
 ------------
-[Node.js](http://nodejs.org) and [PEG](http://pegjs.majda.cz). GNU Make helps and nodeunit runs the tests.
+ * [Node.js](http://nodejs.org)
+ * [PEG](http://pegjs.majda.cz) is a javascript parser generator.
+ * [stdio](http://sgmonda.github.io/stdio/) is used in gjutc for command line parsing.
+ * [nodeunit](https://github.com/caolan/nodeunit) runs the tests.
+ * [GNU Make](https://www.gnu.org/software/make/) is optional.
 
 Usage
 ------
