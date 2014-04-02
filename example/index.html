@@ -1,5 +1,6 @@
 @require variables
 
+
 <html>
     <head>
       <title>Static: @variables.title</title>
@@ -8,13 +9,11 @@
       @insert(header.html)
 
       <div class="foo bar" @variables.modifyBody()>
-        @variables.body 
+        @variables.body
       </div>
 
       <ul>
-        <li @foreach(@variables.listItem() in @variables.array)>
-          
-        </li>
+        <li @foreach(@variables.listItem() in @variables.array)></li>
       </ul>
     </body>
 </html>

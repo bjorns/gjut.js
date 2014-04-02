@@ -18,6 +18,6 @@ module.exports = (function() {
     body: "Blah blah body.",
     modifyBody: modifyBody,
     listItem: listItem,
-    array: [1,2,3,4,5]
+    array: ['foo', 'bar', 'baz']
   };
 })();

@@ -5,7 +5,7 @@ Ask any old unix beard how much preprocessor code is a dignified amount and they
 
 Except HTML templating that is. For some reason we still gladly suffer 1950's style development tools when we generate HTML. Why is that?
 
-Gjut is a semantic templating language. This means unlike ordinary templating systems like rhtml or 
+Gjut is a semantic templating language. This means unlike ordinary templating systems like rhtml or
 velocity, it cares whether you produce proper html.
 
 So far _Gjut_ is merely an experiment to make a point.
@@ -20,8 +20,8 @@ Requirements
 
 Usage
 ------
-Gjut comes with an example command line compiler. 
-    
+Gjut comes with an example command line compiler.
+
     $ ./bin/gjutc example/index.html
 
 
@@ -30,8 +30,8 @@ Macros
 
 ##### @import
 
-Imports a javascript module. 
-    
+Imports a javascript module.
+
     @import dir.file
 
 Loads dir/file.js
@@ -65,7 +65,7 @@ Assuming your module returns:
         }
     }
 
-The input 
+The input
 
     <div @modulename.func()></div>
 
@@ -73,3 +73,33 @@ will render as:
 
     <div id="syntheticId"></div>
 
+
+##### @foreach
+
+Assuming your module returns:
+
+    return {
+      listItem: function listItem(element, i) {
+        element.content.push({
+          type: 'text',
+          content: '=== ' + i + " ==="
+        });
+      }
+      array: ['foo', 'bar', 'baz']
+    }
+
+and your html contains
+
+    <li @foreach(@variables.listItem() in @variables.array)></li>
+
+the output will be
+
+    <li>
+      === foo ===
+    </li>
+    <li>
+      === bar ===
+    </li>
+    <li>
+      === baz ===
+    </li>
