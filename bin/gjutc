@@ -6,6 +6,7 @@
     stdio = require('stdio'),
     options = stdio.getopt({
     'format': {key: 'f', args: 1, description: 'Output format, valid formats are html and json.'}
+    // 'index': {key: 'x', args: 0, description: 'Output generated index instead of document.'},
   });
 
 
