@@ -5,6 +5,7 @@
 
   doc = { type: 'document',
           imports: [],
+          verifications: [],
           content: [],
           annotation: null
         };
@@ -15,6 +16,7 @@ start
 
 document
   = l:importlist document { doc.imports = doc.imports.concat(l); }
+  / v:verifylist document { doc.verifications = doc.verifications.concat(v); }
   / c:content document { doc.content = doc.content.concat(c); }
   / { }
 
@@ -25,6 +27,18 @@ importlist
 import
   = "@require " modulename:module space {
     return {'type': 'import', 'module': modulename };
+  }
+
+verifylist
+  = v:verify l:verifylist { return [v].concat(l); }
+  / v:verify { return [v]; }
+
+verify
+  = "@verify" space rule:[a-zA-Z0-9\. ]+ {
+    return {
+      type: "verification",
+      rule: parser_util.make_array(rule.join(''))
+    };
   }
 
 variable
