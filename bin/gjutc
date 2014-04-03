@@ -5,8 +5,8 @@
   var path = require('path'),
     stdio = require('stdio'),
     options = stdio.getopt({
-    'format': {key: 'f', args: 1, description: 'Output format, valid formats are html and json.'}
-    // 'index': {key: 'x', args: 0, description: 'Output generated index instead of document.'},
+    'format': {key: 'f', args: 1, description: 'Output format, valid formats are html and json.'},
+    'index': {key: 'x', args: 0, description: 'Output generated index instead of document.'},
   });
 
 
@@ -15,22 +15,32 @@
     var fs = require('fs'),
       gjut = require('../lib/main.js'),
       filename = options.args[0],
-      readStream = fs.ReadStream(filename);
-
-    options.basedir = path.dirname(path.resolve(filename));
+      basedir = path.dirname(path.resolve(filename));
 
     if (!options.format) {
       options.format = 'html';
-    } else {
-      if (options.format !== 'html' && options.format !== 'json') {
-        console.log('error: Only formats html and json are accepted, unexpected: '+ options.format);
-        process.exit(-1);
-      }
     }
-    gjut.render(readStream, process.stdout, options);
+    var doc = gjut.build(filename, basedir);
+
+    if (options.index) {
+      console.log(doc.index);
+      process.exit(0);
+    }
+
+
+    if (options.format === 'html') {
+      gjut.render_html(doc, process.stdout);
+    } else if (options.format === 'json') {
+      gjut.render_json(doc, process.stdout);
+    } else {
+      console.log('error: Only formats html and json are accepted, unexpected: '+ options.format);
+      process.exit(-1);
+    }
   } else {
     console.log("Usage: node gjutc [options] <input-file>");
     console.log("Options:")
     console.log("\t-f, --format=<format>\tOutput format, [html|json].");
+    console.log("\t-x, --index          \tOutput generated index instead of document.");
+
   }
 }());
