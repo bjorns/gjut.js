@@ -1,9 +1,6 @@
 module.exports = (function() {
   function modifyBody(element) {
-    element.attributes.push({
-      name: 'id',
-      value: ["syntheticId"]
-    });
+    element.attributes['id'] = ['syntheticId'];
   }
 
   function listItem(element, i) {

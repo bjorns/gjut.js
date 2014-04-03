@@ -92,10 +92,10 @@ content
   }
 
 opentag
-  = "<" starttag:literal space? attrs:attributelist? annotation:elementannotation?">" {
+  = "<" starttag:literal space? attrs:attributemap? annotation:elementannotation?">" {
     return {
       name: starttag,
-      attributes: attrs === null ? [] : attrs,
+      attributes: attrs === null ? {} : attrs,
       annotation: annotation
     };
   }
@@ -117,9 +117,9 @@ element
       lineno: lineno };
   }
 
-attributelist
-  = a:attribute l:attributelist { return [a].concat(l); }
-  / a:attribute { return [a]; }
+attributemap
+  = a:attribute m:attributemap { parser_util.merge_attributes(m,a) }
+  / a:attribute { return parser_util.merge_attributes({}, a); }
 
 attribute_value
   = "=\"" v:literallist "\"" {
