@@ -2,6 +2,14 @@
 
 (function() {
   "use strict";
+
+  function print_errors(errors) {
+    for (var i = 0; i < doc.errors.length; ++i) {
+      var error = errors[i];
+      console.log(error.type + ": " + error.message);
+    }
+  }
+
   var path = require('path'),
     stdio = require('stdio'),
     options = stdio.getopt({
@@ -22,6 +30,10 @@
     }
     var doc = gjut.build(filename, basedir);
 
+    if (doc.errors.length > 0) {
+      print_errors(doc.errors);
+      process.exit(-1);
+    }
     if (options.index) {
       console.log(doc.index);
       process.exit(0);

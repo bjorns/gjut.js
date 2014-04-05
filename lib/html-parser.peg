@@ -5,9 +5,10 @@
 
   doc = { type: 'document',
           imports: [],
-          verifications: [],
+          rules: [],
           content: [],
-          annotation: null
+          annotation: null,
+          errors: []
         };
 }
 
@@ -16,7 +17,7 @@ start
 
 document
   = l:importlist document { doc.imports = doc.imports.concat(l); }
-  / v:verifylist document { doc.verifications = doc.verifications.concat(v); }
+  / v:rulelist document { doc.rules = doc.rules.concat(v); }
   / c:content document { doc.content = doc.content.concat(c); }
   / { }
 
@@ -29,15 +30,15 @@ import
     return {'type': 'import', 'module': modulename };
   }
 
-verifylist
-  = v:verify l:verifylist { return [v].concat(l); }
-  / v:verify { return [v]; }
+rulelist
+  = r:rule l:rulelist { return [v].concat(l); }
+  / v:rule { return [v]; }
 
-verify
+rule
   = "@verify" space rule:[a-zA-Z0-9\. ]+ {
     return {
-      type: "verification",
-      rule: parser_util.make_array(rule.join(''))
+      type: "rule",
+      checks: parser_util.make_array(rule.join(''))
     };
   }
 
@@ -108,13 +109,16 @@ element
     if (starttag.name != endtag) {
       console.log("error " + lineno + ": Start tag <" + starttag.name + ">  does not match up with end tag </" + endtag + ">")
     }
-    return {
+    var element = {
       type: 'element',
       name: starttag.name,
       attributes: starttag.attributes,
       annotation: starttag.annotation,
       content: c === null ? [] : c,
-      lineno: lineno };
+      lineno: lineno
+    };
+    parser_util.setup_parent_links(element);
+    return element;
   }
 
 attributemap
