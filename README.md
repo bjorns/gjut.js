@@ -58,10 +58,7 @@ Assuming your module returns:
 
     return {
         func: function(element) {
-            element.attributes.push({
-                name: 'id',
-                value: ["syntheticId"]
-            });
+            element.attributes['id'] = ['syntheticId'];
         }
     }
 
