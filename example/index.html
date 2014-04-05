@@ -13,6 +13,10 @@
         <span class="bar">@variables.body</span><br/>
       </div>
 
+
+      <span @variables.condition()>It's either this</span>
+      <span @!variables.condition()>or this</span>
+
       <ul>
         <li @foreach(@variables.listItem() in @variables.array)></li>
       </ul>

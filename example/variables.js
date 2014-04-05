@@ -10,11 +10,16 @@ module.exports = (function() {
     });
   }
 
+  function condition() {
+    return true;
+  }
+
   return {
     title: "My Title",
     body: "Blah blah body.",
     modifyBody: modifyBody,
     listItem: listItem,
-    array: ['foo', 'bar', 'baz']
+    array: ['foo', 'bar', 'baz'],
+    condition: condition
   };
 })();

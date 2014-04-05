@@ -167,9 +167,10 @@ attribute
   }
 
 functioncall
-  = "@" functionname:module "()" {
+  = "@" invert:"!"? functionname:module "()" {
     var variable = parser_util.make_variable(functionname);
     variable['type'] = 'funcall';
+    variable['inverted'] = invert ? true : false;
     return variable;
   }
 
