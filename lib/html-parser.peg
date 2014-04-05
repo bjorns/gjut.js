@@ -104,7 +104,20 @@ opentag
 closetag
   = "</" endtag:literal ">" space? { return endtag }
 
+selfclosing_tag
+  = "<" tagname:literal space? attrs:attributemap? annotation:elementannotation? "/>" {
+    return {
+      name: tagname,
+      attributes: attrs === null ? {} : attrs,
+      annotation: annotation
+    };
+  }
+
 element
+  = e:selfclosing_element { return e; }
+ / e:standard_element { return e; }
+
+standard_element
   = starttag:opentag c:content? endtag:closetag {
     if (starttag.name != endtag) {
       console.log("error " + lineno + ": Start tag <" + starttag.name + ">  does not match up with end tag </" + endtag + ">")
@@ -115,9 +128,24 @@ element
       attributes: starttag.attributes,
       annotation: starttag.annotation,
       content: c === null ? [] : c,
+      selfclosing: false,
       lineno: lineno
     };
     parser_util.setup_parent_links(element);
+    return element;
+  }
+
+selfclosing_element
+  = tag:selfclosing_tag {
+    var element = {
+      type: 'element',
+      selfclosing: true,
+      name: tag.name,
+      attributes: tag.attributes,
+      annotation: tag.annotation,
+      content: [],
+      lineno: lineno
+    };
     return element;
   }
 
