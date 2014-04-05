@@ -4,6 +4,9 @@ example: lib/html-parser.js
 test:
 	nodeunit test
 
+doc:
+	docco lib/*.js
+
 lib/%.js: lib/%.peg /usr/local/bin/pegjs
 	pegjs $< 
 
@@ -14,4 +17,4 @@ lib/%.js: lib/%.peg /usr/local/bin/pegjs
 clean: lib/html-parser.js
 	rm -f $^
 
-.PHONY: clean test example
+.PHONY: clean test example doc
