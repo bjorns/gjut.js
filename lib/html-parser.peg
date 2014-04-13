@@ -1,5 +1,6 @@
 {
-  var parser_util = require('./parser_util.js')
+  var parser_util = require('./parser_util.js'),
+    rule_parser = require('./rule-parser.js');
 
   lineno = 1;
 
@@ -31,15 +32,12 @@ import
   }
 
 rulelist
-  = r:rule l:rulelist { return [v].concat(l); }
-  / v:rule { return [v]; }
+  = r:rule l:rulelist { return [r].concat(l); }
+  / r:rule { return [r]; }
 
 rule
-  = "@verify" space rule:[a-zA-Z0-9\. ]+ {
-    return {
-      type: "rule",
-      checks: parser_util.make_array(rule.join(''))
-    };
+  = "@verify" space ruletext:[a-zA-Z0-9\. -<>]+ '\n' {
+    return rule_parser.parse(ruletext.join(''));
   }
 
 variable

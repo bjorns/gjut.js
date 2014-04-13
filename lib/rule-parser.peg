@@ -1,0 +1,49 @@
+start
+  = r:rule { return r; }
+
+rule
+  = s0:selector space r:relation space s1:selector {
+    return {
+      selector0: s0,
+      relation: r,
+      selector1: s1
+    }
+  }
+
+selector
+  = l:literal {
+    return {
+      type: 'plain_selector',
+      value: l
+    };
+  }
+
+literal
+  = str:[a-zA-Z0-9\.]+ {
+    return str.join('');
+  }
+
+relation
+  = r:has_child_relation { return r; }
+  / r:has_parent_relation { return r; }
+
+has_child_relation
+ = "->" {
+   return {
+     type: 'relation',
+     subtype: 'has_child_relation'
+   };
+ }
+
+has_parent_relation
+ = "<-" {
+   return {
+     type: 'relation',
+     subtype: 'has_child_relation'
+   };
+ }
+
+space
+  = chars:[ \t]+ {
+    return "SPACE"
+  }
