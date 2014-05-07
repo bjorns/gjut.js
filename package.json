@@ -1,0 +1,21 @@
+{
+  "author": "Björn Skoglund",
+  "name": "gjut",
+  "description": "Experimental HTML aware templating language.",
+  "version": "0.1.2",
+  "repository": {
+    "url": "http://github.com/bjorns/gjut.js"
+  },
+  "files": ["lib", "bin", "docs", "LICENSE", "README.md"],
+  "main": "./lib/main",
+  "bin": {
+    "gjutc": "./bin/gjutc"
+  },
+  "dependencies": {"pegjs": "0.8.0",
+                   "stdio": "0.1.5"},
+  "devDependencies": {"nodeunit": "0.8.6"},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
