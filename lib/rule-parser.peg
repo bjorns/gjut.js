@@ -39,7 +39,7 @@ has_parent_relation
  = "<-" {
    return {
      type: 'relation',
-     subtype: 'has_child_relation'
+     subtype: 'has_parent_relation'
    };
  }
 
