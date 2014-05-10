@@ -2,8 +2,29 @@ start
   = r:rule { return r; }
 
 rule
+  = r:binary_rule
+  / r:unary_rule {
+    return r;
+  }
+
+predicate
+  = p:("exist") {
+    return p;
+  }
+
+unary_rule
+  = p:predicate space s0:selector {
+    return {
+      type: 'unary_rule',
+      predicate: p,
+      selector: s0
+    }
+  }
+
+binary_rule
   = s0:selector space r:relation space s1:selector {
     return {
+      type: 'binary_rule',
       selector0: s0,
       relation: r,
       selector1: s1
@@ -19,7 +40,7 @@ selector
   }
 
 literal
-  = str:[a-zA-Z0-9\.]+ {
+  = str:[a-zA-Z0-9\.#]+ {
     return str.join('');
   }
 
