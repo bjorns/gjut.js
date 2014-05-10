@@ -49,20 +49,20 @@ relation
   / r:has_parent_relation { return r; }
 
 has_child_relation
- = "->" {
-   return {
-     type: 'relation',
-     subtype: 'has_child_relation'
-   };
- }
+  = "->" {
+    return {
+      type: 'relation',
+      subtype: 'has_child_relation'
+    };
+  }
 
 has_parent_relation
- = "<-" {
-   return {
-     type: 'relation',
-     subtype: 'has_parent_relation'
-   };
- }
+  = "<-" {
+    return {
+      type: 'relation',
+      subtype: 'has_parent_relation'
+    };
+  }
 
 space
   = chars:[ \t]+ {
