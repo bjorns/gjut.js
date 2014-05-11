@@ -29,7 +29,7 @@
       options.format = 'html';
     }
     var doc = gjut.compile(filename, basedir);
-    
+
     if (doc.errors.length > 0) {
       print_errors(doc.errors);
       process.exit(-1);

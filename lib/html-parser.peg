@@ -1,25 +1,30 @@
 {
-  var parser_util = require('./parser_util.js'),
+  var ParserUtil = require('./parser_util.js'),
     rule_parser = require('./rule-parser.js');
 
   lineno = 1;
+  next_id = 101;
 
-  doc = { type: 'document',
-          imports: [],
-          rules: [],
-          content: [],
-          annotation: null,
-          errors: []
-        };
+  template = {
+    type: 'template',
+    doc: {
+      type: 'document',
+      imports: [],
+      content: [],
+      annotation: null,
+      rules: [],
+      errors: [],
+    }
+  };
 }
 
 start
-  = document { return doc; }
+  = document { return template; }
 
 document
-  = l:importlist document { doc.imports = doc.imports.concat(l); }
-  / v:rulelist document { doc.rules = doc.rules.concat(v); }
-  / c:content document { doc.content = doc.content.concat(c); }
+  = l:importlist document { template.doc.imports = template.doc.imports.concat(l); }
+  / v:rulelist document { template.doc.rules = template.doc.rules.concat(v); }
+  / c:content document { template.doc.content = template.doc.content.concat(c); }
   / { }
 
 importlist
@@ -121,6 +126,8 @@ standard_element
       console.log("error " + lineno + ": Start tag <" + starttag.name + ">  does not match up with end tag </" + endtag + ">")
     }
     var element = {
+      id: next_id++,
+      parent_id: null,
       type: 'element',
       name: starttag.name,
       attributes: starttag.attributes,
@@ -129,13 +136,15 @@ standard_element
       selfclosing: false,
       lineno: lineno
     };
-    parser_util.setup_parent_links(element);
+    ParserUtil.setup_parent_links(element)
     return element;
   }
 
 selfclosing_element
   = tag:selfclosing_tag {
     var element = {
+      id: next_id++,
+      parent_id: null,
       type: 'element',
       selfclosing: true,
       name: tag.name,
@@ -144,12 +153,13 @@ selfclosing_element
       content: [],
       lineno: lineno
     };
+    ParserUtil.setup_parent_links(element)
     return element;
   }
 
 attributemap
-  = a:attribute m:attributemap { parser_util.merge_attributes(m,a) }
-  / a:attribute { return parser_util.merge_attributes({}, a); }
+  = a:attribute m:attributemap { ParserUtil.merge_attributes(m,a) }
+  / a:attribute { return ParserUtil.merge_attributes({}, a); }
 
 attribute_value
   = "=\"" v:literallist "\"" {
@@ -166,7 +176,7 @@ attribute
 
 functioncall
   = "@" invert:"!"? functionname:module "()" {
-    var variable = parser_util.make_variable(functionname);
+    var variable = ParserUtil.make_variable(functionname);
     variable['type'] = 'funcall';
     variable['inverted'] = invert ? true : false;
     return variable;
@@ -177,7 +187,7 @@ iteration
     return {
       type: 'iteration',
       funcall: func,
-      collection: parser_util.make_variable(collection)
+      collection: ParserUtil.make_variable(collection)
     }
   }
 
@@ -198,6 +208,6 @@ literal
 
 space
   = chars:[ \n\t]+ {
-    lineno += parser_util.count_linebreaks(chars.join("")); // Increase current line.
+    lineno += ParserUtil.count_linebreaks(chars.join("")); // Increase current line.
     return "SPACE"
   }

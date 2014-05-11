@@ -10,11 +10,21 @@ module.exports = {
     var Objects = require('../lib/objects.js');
       source = { foo: {'bar': 3}},
       dst = Objects.clone(source);
-
     source.foo['bar'] = 4;
 
     test.ok(source.foo['bar'] === 4);
     test.ok(dst.foo['bar'] === 3);
+    test.done();
+  },
+  testCloneArray: function (test) {
+    var Objects = require('../lib/objects.js');
+      source = [1,2, {foo: 'foo'}],
+      dst = Objects.clone(source);
+
+    source[2].foo = 'bar';
+
+    test.deepEqual([1,2, {foo: 'bar'}], source);
+    test.deepEqual([1,2, {foo: 'foo'}], dst);
     test.done();
   },
   testUnion: function (test) {
