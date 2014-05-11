@@ -100,3 +100,37 @@ the output will be
     <li>
       === baz ===
     </li>
+
+
+
+Verification
+------------
+
+The structural nature of a compiled template means that verification
+can be performed on the static template before rendering. In theory dynamic
+verification after code execution is also possible but at at performance cost.
+This is not implemented.
+
+
+##### Has child
+
+    @verify .foo -> .bar
+
+Implies that if there is an element with class _foo_ there must also be
+somewhere in it tree of subelements an element with class _bar_. Normal css
+selectors apply so #foo looks for _id="foo"_ and _div_ means any element _div_.
+
+
+##### Has parent
+
+    @verify .foo <- .bar
+
+Means any element with class _bar_ must have in its parent chain an element with
+class _foo_.
+
+##### Exists
+
+    @verify exist #canvas
+
+Will fail unless there in the compiled template is an element with id _canvas_.
+sub-templates from the use of the _@insert_ macro will also be checked.
