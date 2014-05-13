@@ -52,6 +52,13 @@ Assuming the module _modulename_ returns
 
 the variable @modulename.foobar can be inserted as an element content and will render _Hello, world!_.
 
+The call to gjut.render_html() also takes an object of local variables from the
+user. Assuming passing something like
+
+    gjut.render_local(template, {'local': 'My local var'}, context)
+
+The variable _@local_ will be replaced.
+
 ##### Element functions
 
 Assuming your module returns:

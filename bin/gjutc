@@ -14,6 +14,7 @@
     stdio = require('stdio'),
     options = stdio.getopt({
     'format': {key: 'f', args: 1, description: 'Output format, valid formats are html and json.'},
+    'locals': {key: 'l', args: 1, description: 'Local variables as comma separated list of key value pairs.'},
     'index': {key: 'x', args: 0, description: 'Output generated index instead of document.'},
   });
 
@@ -23,27 +24,36 @@
     var fs = require('fs'),
       gjut = require('../lib/main.js'),
       filename = options.args[0],
-      basedir = path.dirname(path.resolve(filename));
+      basedir = path.dirname(path.resolve(filename)),
+      locals = {};
 
     if (!options.format) {
       options.format = 'html';
     }
-    var doc = gjut.compile(filename, basedir);
+    var template = gjut.compile(filename, basedir);
 
-    if (doc.errors.length > 0) {
-      print_errors(doc.errors);
+    if (template.errors.length > 0) {
+      print_errors(template.errors);
       process.exit(-1);
     }
     if (options.index) {
-      console.log(doc.index);
+      console.log(template.index);
       process.exit(0);
     }
 
+    console.log(options.locals);
+    if (options.locals) {
+      var args = options.locals.split(',');
+      for (var i = 0; i < args.length; ++i) {
+        var local_pair = args[i].split(':');
+        locals[local_pair[0]] = local_pair[1];
+      }
+    }
 
     if (options.format === 'html') {
-      gjut.render_html(doc, process.stdout);
+      gjut.render_html(template, locals, process.stdout);
     } else if (options.format === 'json') {
-      gjut.render_json(doc, process.stdout);
+      gjut.render_json(template, locals, process.stdout);
     } else {
       console.log('error: Only formats html and json are accepted, unexpected: '+ options.format);
       process.exit(-1);
