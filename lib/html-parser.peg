@@ -117,8 +117,21 @@ selfclosing_tag
   }
 
 element
-  = e:selfclosing_element { return e; }
- / e:standard_element { return e; }
+  = e:doctype_element { return e; }
+  / e:selfclosing_element { return e; }
+  / e:standard_element { return e; }
+
+doctype_element
+  = "<!DOCTYPE html>" {
+    return {
+      id: next_id++,
+      type: 'element',
+      subtype: 'doctype',
+      name: '!DOCTYPE',
+      attributes: {'html':''},
+      content: []
+    };
+  }
 
 standard_element
   = starttag:opentag c:content? endtag:closetag {
