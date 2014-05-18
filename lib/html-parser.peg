@@ -2,7 +2,6 @@
   var ParserUtil = require('./parser_util.js'),
     rule_parser = require('./rule-parser.js');
 
-  lineno = 1;
   next_id = 101;
 
   template = {
@@ -136,7 +135,7 @@ doctype_element
 standard_element
   = starttag:opentag c:content? endtag:closetag {
     if (starttag.name != endtag) {
-      console.log("error " + lineno + ": Start tag <" + starttag.name + ">  does not match up with end tag </" + endtag + ">")
+      console.log("error " + line() + ": Start tag <" + starttag.name + ">  does not match up with end tag </" + endtag + ">")
     }
     var element = {
       id: next_id++,
@@ -147,7 +146,7 @@ standard_element
       annotation: starttag.annotation,
       content: c === null ? [] : c,
       selfclosing: false,
-      lineno: lineno
+      line: line()
     };
     ParserUtil.setup_parent_links(element)
     return element;
@@ -164,7 +163,7 @@ selfclosing_element
       attributes: tag.attributes,
       annotation: tag.annotation,
       content: [],
-      lineno: lineno
+      line: line()
     };
     ParserUtil.setup_parent_links(element)
     return element;
@@ -221,6 +220,5 @@ literal
 
 space
   = chars:[ \n\t]+ {
-    lineno += ParserUtil.count_linebreaks(chars.join("")); // Increase current line.
     return "SPACE"
   }

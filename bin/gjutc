@@ -4,9 +4,9 @@
   "use strict";
 
   function print_errors(errors) {
-    for (var i = 0; i < doc.errors.length; ++i) {
+    for (var i = 0; i < errors.length; ++i) {
       var error = errors[i];
-      console.log(error.type + ": " + error.message);
+      console.log(error.type + ":" + error.element.line + ": " + error.message);
     }
   }
 
