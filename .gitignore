@@ -2,3 +2,4 @@ node_modules
 docs
 lib/html-parser.js
 lib/rule-parser.js
+.DS_Store
