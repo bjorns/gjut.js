@@ -128,7 +128,8 @@ doctype_element
       subtype: 'doctype',
       name: '!DOCTYPE',
       attributes: {'html':''},
-      content: []
+      content: [],
+      line: line()
     };
   }
 
@@ -170,13 +171,8 @@ selfclosing_element
   }
 
 attributemap
-  = a:attribute m:attributemap { ParserUtil.merge_attributes(m,a) }
+  = a:attribute m:attributemap { return ParserUtil.merge_attributes(m,a) }
   / a:attribute { return ParserUtil.merge_attributes({}, a); }
-
-attribute_value
-  = "=\"" v:literallist "\"" {
-    return v;
-  }
 
 attribute
   = name:literal values:attribute_value? space? {
@@ -185,6 +181,19 @@ attribute
       value: values === null ? [] : values
     };
   }
+
+attribute_value
+  = "=\"" v:attribute_values_list "\"" {
+    return v;
+  }
+
+attribute_values_list
+  = lit:attribute_item lst:attribute_values_list { return [lit].concat(lst); }
+  / lit:attribute_item { return [lit] }
+
+attribute_item
+  = letters:[^ ^"]+ space? { return letters.join(""); }
+
 
 functioncall
   = "@" invert:"!"? functionname:module "()" {
@@ -216,7 +225,7 @@ literallist
   / lit:literal { return [lit] }
 
 literal
-  = letters:[a-zA-Z0-9]+ space? { return letters.join(""); }
+  = letters:[a-zA-Z0-9_-]+ space? { return letters.join(""); }
 
 space
   = chars:[ \n\t]+ {
