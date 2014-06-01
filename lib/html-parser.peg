@@ -40,7 +40,7 @@ rulelist
   / r:rule { return [r]; }
 
 rule
-  = "@verify" space ruletext:[a-zA-Z0-9\. -<>]+ '\n' {
+  = "@verify" space ruletext:[a-zA-Z0-9\. -<>\[\]:]+ '\n' {
     return rule_parser.parse(ruletext.join(''));
   }
 

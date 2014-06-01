@@ -16,6 +16,7 @@
     'format': {key: 'f', args: 1, description: 'Output format, valid formats are html and json.'},
     'locals': {key: 'l', args: 1, description: 'Local variables as comma separated list of key value pairs.'},
     'index': {key: 'x', args: 0, description: 'Output generated index instead of document.'},
+    'quiet': {key: 'q', args: 0, description: 'Don\'t print output.'}
   });
 
 
@@ -26,7 +27,7 @@
       filename = options.args[0],
       basedir = path.dirname(path.resolve(filename)),
       locals = {};
-
+    
     if (!options.format) {
       options.format = 'html';
     }
@@ -49,13 +50,15 @@
       }
     }
 
-    if (options.format === 'html') {
-      gjut.render_html(template, locals, process.stdout);
-    } else if (options.format === 'json') {
-      gjut.render_json(template, locals, process.stdout);
-    } else {
-      console.log('error: Only formats html and json are accepted, unexpected: '+ options.format);
-      process.exit(-1);
+    if (!options.quiet) {
+      if (options.format === 'html') {
+        gjut.render_html(template, locals, process.stdout);
+      } else if (options.format === 'json') {
+        gjut.render_json(template, locals, process.stdout);
+      } else {
+        console.log('error: Only formats html and json are accepted, unexpected: '+ options.format);
+        process.exit(-1);
+      }
     }
   } else {
     console.log("Usage: node gjutc [options] <input-file>");

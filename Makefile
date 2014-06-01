@@ -2,7 +2,7 @@ GENERATED=lib/html-parser.js
 GENERATED+=lib/rule-parser.js
 
 example: $(GENERATED)
-	./bin/gjutc example/index.html --locals "localVariable:MyLocalVariable"
+	./bin/gjutc -q example/index.html --locals "localVariable:MyLocalVariable"
 
 debug: lib/html-parser.js lib/rule-parser.js
 	node debug ./bin/gjutc example/index.html

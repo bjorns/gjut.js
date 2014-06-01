@@ -1,22 +1,27 @@
 @require variables
 
-@verify .foo -> .bar
-@verify .foo <- .bar
-@verify exist #canvas
+@verify .carousel -> .canvas
+@verify .carousel <- .canvas
+@verify type .carousel[width]: int
+@verify exist .carousel
+
+
 
 <!DOCTYPE html>
 <html>
     <head>
       <title>Static: @variables.title</title>
     </head>
-    <body id="canvas">
+    <body>
       @insert(header.html)
 
       <h2>@localVariable</h2>
-      <div class="foo" @variables.modifyBody()>
-        <span class="bar">@variables.body</span><br/>
-      </div>
 
+      <div class="carousel" data-width="300" @variables.modifyBody()>
+        <div class="canvas">
+          <span class="label">@variables.body</span><br/>
+        </div>
+      </div>
 
       <span @variables.condition()>It's either this</span>
       <span @!variables.condition()>or this</span>

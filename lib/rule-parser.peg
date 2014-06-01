@@ -2,13 +2,12 @@ start
   = r:rule { return r; }
 
 rule
-  = r:binary_rule
-  / r:unary_rule {
-    return r;
-  }
+  = r:binary_rule { return r; }
+  / r:type_rule {  return r; }
+  / r:unary_rule { return r; }
 
 predicate
-  = p:("exist") {
+  = p:"exist" {
     return p;
   }
 
@@ -31,10 +30,20 @@ binary_rule
     }
   }
 
+type_rule
+  = "type" space s0:selector "[" data_attr:literal "]:" space? type:"int" {
+    return {
+      type: "type_rule",
+      selector: s0,
+      data_attr: data_attr,
+      expected_type: type
+    }
+  }
+
 selector
   = l:literal {
     return {
-      type: 'plain_selector',
+      type: 'simple_selector',
       value: l
     };
   }
