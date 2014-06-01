@@ -121,23 +121,31 @@ This is not implemented.
 
 ##### Has child
 
-    @verify .foo -> .bar
+    @verify .carousel -> .canvas
 
-Implies that if there is an element with class _foo_ there must also be
-somewhere in it tree of subelements an element with class _bar_. Normal css
+Implies that if there is an element with class _carousel_ there must also be
+somewhere in it tree of subelements an element with class _canvas_. Normal css
 selectors apply so #foo looks for _id="foo"_ and _div_ means any element _div_.
 
 
 ##### Has parent
 
-    @verify .foo <- .bar
+    @verify .carousel <- .canvas
 
-Means any element with class _bar_ must have in its parent chain an element with
-class _foo_.
+Means any element with class _canvas_ must have in its parent chain an element with
+class _carousel_.
 
 ##### Exists
 
-    @verify exist #canvas
+    @verify exist #carousel
 
-Will fail unless there in the compiled template is an element with id _canvas_.
+Will fail unless there in the compiled template is an element with id _carousel_.
 sub-templates from the use of the _@insert_ macro will also be checked.
+
+##### Data Attribute type
+
+    @verify type .carousel[width]: int
+
+Checks that the type of the data-attribute _data-width_ contains a single value
+and that this value produces a number when converted to int using javascripts
+_parseInt()_ method.

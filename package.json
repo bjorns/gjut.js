@@ -2,7 +2,7 @@
   "author": "Björn Skoglund",
   "name": "gjut",
   "description": "Experimental HTML aware templating language.",
-  "version": "0.1.4",
+  "version": "0.1.5-beta",
   "repository": {
     "url": "http://github.com/bjorns/gjut.js"
   },
